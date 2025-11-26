@@ -9,10 +9,11 @@ import Profile from './pages/Profile';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+  const token = localStorage.getItem('token');
   const userString = localStorage.getItem('user');
   const user = userString ? JSON.parse(userString) : null;
 
-  if (!isAuthenticated || !user) {
+  if (!isAuthenticated || !token || !user) {
     return <Navigate to="/login" replace />;
   }
 

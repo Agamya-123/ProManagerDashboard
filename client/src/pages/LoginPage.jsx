@@ -10,14 +10,19 @@ const LoginPage = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        console.log("Login button clicked"); // Debug log
+        console.log("Email:", email, "Password:", password); // Debug log
         try {
+            console.log("Sending request to /auth/login..."); // Debug log
             const res = await API.post('/auth/login', { email, password });
-            const user = res.data.data;
-
-            localStorage.setItem('isAuthenticated', 'true');
-            localStorage.setItem('user', JSON.stringify(user)); // Store full user object
-
-            navigate('/');
+            console.log("Response:", res); // Debug log
+            
+            if (res.data.user) {
+                localStorage.setItem('user', JSON.stringify(res.data.user));
+                localStorage.setItem('token', res.data.token);
+                localStorage.setItem('isAuthenticated', 'true');
+                window.location.href = '/';
+            }
         } catch (error) {
             console.error('Login failed:', error);
             alert(error.response?.data?.error || 'Login failed');

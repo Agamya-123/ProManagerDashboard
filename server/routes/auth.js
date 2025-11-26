@@ -2,36 +2,40 @@ const express = require('express');
 const router = express.Router();
 const db = require('../database');
 
-// POST /api/auth/login
-router.post('/login', (req, res) => {
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_key_change_in_production';
+
+// Login Route
+router.post('/login', async (req, res) => {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-        return res.status(400).json({ error: 'Email and password are required' });
-    }
-
-    const sql = 'SELECT * FROM employees WHERE email = ?';
-    db.get(sql, [email], (err, user) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-
+    try {
+        const user = await db.get('SELECT * FROM employees WHERE email = ?', [email]);
+        
         if (!user) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // In a real app, compare hashed passwords here
         if (user.password !== password) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // Return user info (excluding password)
-        const { password: _, ...userWithoutPassword } = user;
+        // Generate JWT
+        const token = jwt.sign(
+            { id: user.id, email: user.email, role: user.role },
+            JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        // Return user info (excluding password) and token
+        const { password: _, ...userInfo } = user;
         res.json({
             message: 'Login successful',
-            data: userWithoutPassword
+            user: userInfo,
+            token
         });
-    });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 module.exports = router;
