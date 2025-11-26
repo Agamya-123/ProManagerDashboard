@@ -44,9 +44,16 @@ const Navbar = () => {
                         </div>
                     </div>
                     <div className="flex items-center space-x-4">
-                        <div className="h-8 w-8 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold shadow-inner ring-2 ring-primary-400/50">
-                            {user?.name?.charAt(0) || 'U'}
-                        </div>
+                        <Link to="/profile" className="flex items-center space-x-3 group" title="View Profile">
+                            <div className="text-right hidden md:block">
+                                <p className="text-sm font-medium text-white group-hover:text-indigo-200 transition-colors">{user?.name}</p>
+                                <p className="text-xs text-indigo-200">{user?.role}</p>
+                            </div>
+                            <div className="h-9 w-9 rounded-full bg-white/10 flex items-center justify-center text-white font-bold shadow-sm ring-1 ring-white/20 group-hover:ring-white/50 transition-all backdrop-blur-sm">
+                                {user?.name?.charAt(0) || 'U'}
+                            </div>
+                        </Link>
+                        <div className="h-6 w-px bg-white/10 mx-2"></div>
                         <button
                             onClick={() => {
                                 localStorage.removeItem('isAuthenticated');

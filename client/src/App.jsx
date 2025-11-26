@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import EmployeeList from './pages/EmployeeList';
 import TaskList from './pages/TaskList';
 import LoginPage from './pages/LoginPage';
+import Profile from './pages/Profile';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
@@ -40,6 +41,11 @@ function App() {
         <Route path="/tasks" element={
           <ProtectedRoute>
             <TaskList />
+          </ProtectedRoute>
+        } />
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <Profile />
           </ProtectedRoute>
         } />
       </Routes>

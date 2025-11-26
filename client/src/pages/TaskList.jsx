@@ -135,6 +135,14 @@ const TaskList = () => {
         ? tasks
         : tasks.filter(task => task.assigned_to === user?.id);
 
+    const isOverdue = (dateString, status) => {
+        if (!dateString || status === 'Done') return false;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const dueDate = new Date(dateString);
+        return dueDate < today;
+    };
+
     return (
         <div>
             <div className="flex justify-between items-center mb-8">
@@ -166,7 +174,7 @@ const TaskList = () => {
                     </thead>
                     <tbody className="bg-white divide-y divide-slate-100">
                         {filteredTasks.map((task) => (
-                            <tr key={task.id} className="hover:bg-slate-50/80 transition-colors">
+                            <tr key={task.id} className={`hover:bg-slate-50/80 transition-colors ${isOverdue(task.due_date, task.status) ? 'bg-rose-50/50 border-l-4 border-rose-500' : ''}`}>
                                 <td className="px-6 py-4">
                                     <div className="text-sm font-medium text-slate-900">{task.title}</div>
                                     <div className="text-sm text-slate-500 mt-0.5">{task.description}</div>
@@ -189,7 +197,10 @@ const TaskList = () => {
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-slate-500">{task.due_date}</div>
+                                    <div className={`text-sm ${isOverdue(task.due_date, task.status) ? 'text-rose-600 font-medium' : 'text-slate-500'}`}>
+                                        {task.due_date}
+                                        {isOverdue(task.due_date, task.status) && <span className="ml-2 text-xs bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full">Overdue</span>}
+                                    </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <button onClick={() => handleOpenModal(task)} className="text-primary-600 hover:text-primary-900 mr-4 p-2 hover:bg-primary-50 rounded-lg transition-colors">
