@@ -10,12 +10,8 @@ const LoginPage = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        console.log("Login button clicked"); // Debug log
-        console.log("Email:", email, "Password:", password); // Debug log
         try {
-            console.log("Sending request to /auth/login..."); // Debug log
             const res = await API.post('/auth/login', { email, password });
-            console.log("Response:", res); // Debug log
             
             if (res.data.user) {
                 localStorage.setItem('user', JSON.stringify(res.data.user));
