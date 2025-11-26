@@ -68,6 +68,23 @@ const db = new sqlite3.Database(dbPath, (err) => {
                     console.log('Tasks table ready.');
                 }
             });
+
+            // Create Comments Table
+            db.run(`CREATE TABLE IF NOT EXISTS comments (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                task_id INTEGER NOT NULL,
+                user_id INTEGER NOT NULL,
+                content TEXT NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (task_id) REFERENCES tasks (id) ON DELETE CASCADE,
+                FOREIGN KEY (user_id) REFERENCES employees (id) ON DELETE CASCADE
+            )`, (err) => {
+                if (err) {
+                    console.error('Error creating comments table:', err.message);
+                } else {
+                    console.log('Comments table ready.');
+                }
+            });
         });
     }
 });

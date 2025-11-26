@@ -15,6 +15,34 @@ const TaskList = () => {
         assigned_to: '',
         due_date: ''
     });
+    const [comments, setComments] = useState([]);
+    const [newComment, setNewComment] = useState('');
+
+    const fetchComments = async (taskId) => {
+        try {
+            const res = await API.get(`/comments/${taskId}`);
+            setComments(res.data.data);
+        } catch (error) {
+            console.error('Error fetching comments:', error);
+        }
+    };
+
+    const handleAddComment = async (e) => {
+        e.preventDefault();
+        if (!newComment.trim()) return;
+        try {
+            const user = JSON.parse(localStorage.getItem('user'));
+            await API.post('/comments', {
+                task_id: currentTask.id,
+                user_id: user.id,
+                content: newComment
+            });
+            setNewComment('');
+            fetchComments(currentTask.id);
+        } catch (error) {
+            console.error('Error adding comment:', error);
+        }
+    };
 
     useEffect(() => {
         fetchTasks();
@@ -60,8 +88,10 @@ const TaskList = () => {
                 assigned_to: task.assigned_to || '',
                 due_date: task.due_date || ''
             });
+            fetchComments(task.id);
         } else {
             setCurrentTask(null);
+            setComments([]);
             setFormData({
                 title: '',
                 description: '',
@@ -101,8 +131,8 @@ const TaskList = () => {
     const user = userString ? JSON.parse(userString) : null;
     const isAdmin = user?.role === 'Admin';
 
-    const filteredTasks = isAdmin 
-        ? tasks 
+    const filteredTasks = isAdmin
+        ? tasks
         : tasks.filter(task => task.assigned_to === user?.id);
 
     return (
@@ -198,7 +228,13 @@ const TaskList = () => {
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1">Due Date</label>
-                            <input type="date" className="block w-full border-slate-200 rounded-xl shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm p-2.5 bg-slate-50 border" value={formData.due_date} onChange={(e) => setFormData({ ...formData, due_date: e.target.value })} />
+                            <input
+                                type="date"
+                                className={`block w-full border-slate-200 rounded-xl shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm p-2.5 bg-slate-50 border ${!isAdmin ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                value={formData.due_date}
+                                onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
+                                disabled={!isAdmin}
+                            />
                         </div>
                     </div>
                     <div>
@@ -216,6 +252,40 @@ const TaskList = () => {
                         </button>
                     </div>
                 </form>
+
+                {currentTask && (
+                    <div className="mt-8 pt-6 border-t border-slate-100">
+                        <h4 className="text-lg font-bold text-slate-900 mb-4">Comments</h4>
+                        <div className="space-y-4 mb-4 max-h-48 overflow-y-auto">
+                            {comments.map((comment) => (
+                                <div key={comment.id} className="bg-slate-50 p-3 rounded-lg">
+                                    <div className="flex justify-between items-start">
+                                        <span className="text-sm font-semibold text-slate-900">{comment.user_name}</span>
+                                        <span className="text-xs text-slate-400">{new Date(comment.created_at).toLocaleString()}</span>
+                                    </div>
+                                    <p className="text-sm text-slate-600 mt-1">{comment.content}</p>
+                                </div>
+                            ))}
+                            {comments.length === 0 && <p className="text-sm text-slate-400 italic">No comments yet.</p>}
+                        </div>
+                        <div className="flex gap-2">
+                            <input
+                                type="text"
+                                placeholder="Add a comment..."
+                                className="block w-full border-slate-200 rounded-xl shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm p-2.5 bg-slate-50 border"
+                                value={newComment}
+                                onChange={(e) => setNewComment(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && handleAddComment(e)}
+                            />
+                            <button
+                                onClick={handleAddComment}
+                                className="bg-slate-900 text-white px-4 py-2 rounded-xl hover:bg-slate-800 transition-colors"
+                            >
+                                Send
+                            </button>
+                        </div>
+                    </div>
+                )}
             </Modal>
         </div>
     );

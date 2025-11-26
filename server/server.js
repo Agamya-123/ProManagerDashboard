@@ -18,6 +18,7 @@ app.use(bodyParser.json());
 app.use('/api/employees', employeeRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/comments', require('./routes/comments'));
 
 app.get('/', (req, res) => {
     res.json({ message: 'Employee & Task Management API is running.' });

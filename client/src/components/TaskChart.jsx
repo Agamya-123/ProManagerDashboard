@@ -6,7 +6,7 @@ const TaskChart = ({ tasks }) => {
         { name: 'Todo', value: tasks.filter(t => t.status === 'Todo').length, color: '#f59e0b' }, // Amber
         { name: 'In Progress', value: tasks.filter(t => t.status === 'In Progress').length, color: '#8b5cf6' }, // Violet
         { name: 'Done', value: tasks.filter(t => t.status === 'Done').length, color: '#10b981' }, // Emerald
-    ].filter(item => item.value > 0);
+    ];
 
     if (data.length === 0) {
         return (

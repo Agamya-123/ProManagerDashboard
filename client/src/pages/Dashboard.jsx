@@ -98,10 +98,40 @@ const Dashboard = () => {
             <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2">
                     <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
-                        <h2 className="text-xl font-bold text-slate-900 mb-4">Recent Activity</h2>
+                        <h2 className="text-xl font-bold text-slate-900 mb-4">Recent Tasks</h2>
                         <div className="space-y-4">
-                            {/* Placeholder for recent activity or task list preview */}
-                            <p className="text-slate-500 text-sm">No recent activity to show.</p>
+                            {tasks.slice(0, 5).map((task) => (
+                                <div key={task.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100 hover:border-primary-200 transition-colors">
+                                    <div className="flex items-center space-x-4">
+                                        <div className={`p-2 rounded-lg ${task.status === 'Done' ? 'bg-emerald-100 text-emerald-600' :
+                                            task.status === 'In Progress' ? 'bg-violet-100 text-violet-600' :
+                                                'bg-amber-100 text-amber-600'
+                                            }`}>
+                                            <CheckSquare className="w-5 h-5" />
+                                        </div>
+                                        <div>
+                                            <p className="font-medium text-slate-900">{task.title}</p>
+                                            <p className="text-xs text-slate-500">
+                                                Assigned to: <span className="font-medium">{task.assigned_employee_name || 'Unassigned'}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${task.status === 'Done' ? 'bg-emerald-100 text-emerald-700' :
+                                            task.status === 'In Progress' ? 'bg-violet-100 text-violet-700' :
+                                                'bg-amber-100 text-amber-700'
+                                            }`}>
+                                            {task.status}
+                                        </span>
+                                        <p className="text-xs text-slate-400 mt-1">
+                                            {new Date(task.created_at).toLocaleDateString()}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                            {tasks.length === 0 && (
+                                <p className="text-slate-500 text-sm text-center py-4">No recent activity to show.</p>
+                            )}
                         </div>
                     </div>
                 </div>
