@@ -26,6 +26,28 @@ const db = new sqlite3.Database(dbPath, (err) => {
                     console.error('Error creating employees table:', err.message);
                 } else {
                     console.log('Employees table ready.');
+                    
+                    // Check if admin exists, if not seed data
+                    db.get("SELECT count(*) as count FROM employees", [], (err, row) => {
+                        if (err) return console.error(err.message);
+                        if (row.count === 0) {
+                            console.log('Seeding initial data...');
+                            const admin = {
+                                name: 'Alice Admin', 
+                                email: 'admin@example.com', 
+                                password: 'admin123', 
+                                role: 'Admin',
+                                phone: '123-456-7890', 
+                                position: 'System Administrator', 
+                                department: 'IT' 
+                            };
+                            const insert = 'INSERT INTO employees (name, email, password, role, phone, position, department) VALUES (?,?,?,?,?,?,?)';
+                            db.run(insert, [admin.name, admin.email, admin.password, admin.role, admin.phone, admin.position, admin.department], (err) => {
+                                if (err) console.error('Error seeding admin:', err.message);
+                                else console.log('Admin user created.');
+                            });
+                        }
+                    });
                 }
             });
 
