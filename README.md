@@ -5,16 +5,34 @@ A full-stack application for managing employees and tasks, built with React, Nod
 ## Tech Stack
 
 - **Frontend**: React, Vite, TailwindCSS, Axios, React Router, Lucide React
-- **Backend**: Node.js, Express, SQLite3
-- **Database**: SQLite (Self-contained, no external server required)
+- **Backend**: Node.js, Express, SQLite3, PostgreSQL
+- **Database**: SQLite (Local Development) / PostgreSQL (Production - e.g., Render)
 
 ## Features
 
 - **Dashboard**: Overview of total employees, tasks, pending tasks, and completed tasks.
 - **Authentication**: Secure login page with route protection.
+- **Profile Management**: View and update user profile details including password changes.
 - **Employee Management**: List, Add, Edit, and Delete employees.
 - **Task Management**: List, Add, Edit, and Delete tasks. Assign tasks to employees.
 - **Responsive Design**: Built with TailwindCSS for a modern and responsive UI.
+
+## Screenshots
+
+### Login Page
+![Login Page](screenshots/login.png)
+
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### Employee Management
+![Employees](screenshots/employees.png)
+
+### Task Management
+![Tasks](screenshots/tasks.png)
+
+### User Profile
+![Profile](screenshots/profile.png)
 
 ## Setup Instructions
 
@@ -46,6 +64,9 @@ npm start
 
 The server will run on `http://localhost:5000`.
 The database (`database.sqlite`) will be automatically created and seeded with initial data.
+
+**Note for Production (e.g., Render):**
+If a `DATABASE_URL` environment variable is present, the application will automatically switch to using PostgreSQL. Ensure your PostgreSQL database is provisioned and the connection string is correct.
 
 ### 3. Frontend Setup
 
@@ -85,4 +106,4 @@ The application will run on `http://localhost:5173` (or the port shown in the te
 ## Assumptions
 
 - The database is SQLite for simplicity and ease of setup.
-- No authentication was implemented as it was a bonus feature and not a core requirement, focusing instead on a clean and functional CRUD experience.
+- Authentication is implemented using JWT (JSON Web Tokens) for secure access.
